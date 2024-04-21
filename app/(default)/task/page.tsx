@@ -72,7 +72,7 @@ import { usePathname } from 'next/navigation';
         try {
             const payload = {
                 image_base64: imageBase64,
-                task: taskData.tasks[activeStep].task
+                task: activeStep == 0 ? 'Drink water' : taskData.tasks[activeStep].task,
             };
             console.log(payload);
             const response = await fetch('https://vision-agent-b28f010409b5.herokuapp.com/describe-image', {
@@ -85,7 +85,7 @@ import { usePathname } from 'next/navigation';
             const responseData = await response.json();
             console.log('Submission successful:', responseData);
             setIsLoading(false);
-            if (responseData.result){
+            if (responseData.result == 'true'){
                 setActiveStep(activeStep+1);
                 setPoints(points + 20);
             } else {
@@ -143,8 +143,10 @@ import { usePathname } from 'next/navigation';
         <div className="mx-auto max-w-4xl p-8 my-20">
             {isLoading ? (
             <div className="flex justify-center align-center">
-                <Spinner className="h-12 w-12" />
-                {/* <h2 className="text-5xl md:text-6xl font-extrabold leading-tighter tracking-tighter mb-4" data-aos="zoom-y-out">Our AI is planning out the best tasks for <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-teal-400">You.</span></h2> */}
+                <h2 className="text-5xl md:text-6xl font-extrabold leading-tighter tracking-tighter mb-4" data-aos="zoom-y-out">Our AI is planning out the best tasks for <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-teal-400">You.</span><Spinner className="h-12 w-12" /></h2>
+                <div>
+                {/* <Spinner className="h-12 w-12" /> */}
+                </div>
             </div>
             ) : taskData ? (
                 <div>
@@ -218,7 +220,9 @@ import { usePathname } from 'next/navigation';
                     {/* Put response here */}
                     {activeStep == 0 ? "Drinking water provides a physical distraction from the act of smoking. The act of drinking water mimics some of the hand-to-mouth actions of smoking, which can psychologically satisfy the craving." : taskData.tasks[activeStep].description}
                 </div>
-                <Button onClick={handleSubmit} size="lg">{"Submit"}</Button>
+                <div className="m-10">
+                    <Button onClick={handleSubmit} size="lg">{"Submit"}</Button>
+                </div>
             </div>
             ) : (
                 <p>No task details available. Please go back and select a problem.</p>
